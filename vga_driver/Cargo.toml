@@ -1,0 +1,10 @@
+[package]
+name = "vga_driver"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+sandcell = { path = "../sandcell" }
+ecdysis = { path = "../ecdysis" }
+helix_db = { path = "../helix_db" }
+ostd = { path = "../ostd" }

@@ -1,0 +1,25 @@
+[workspace]
+members = [
+    "sandcell",
+    "ecdysis",
+    "helix_db",
+    "deepsurf",
+    "vga_driver",
+    "display_driver",
+    "network_driver",
+    "red_team",
+    "ostd",
+    "bootloader",
+    "scheduler",
+    "zenith_cli",
+    "bench_latency",
+]
+
+resolver = "2"
+
+# Profile for Size Optimization (Kernel)
+[profile.release]
+lto = true
+opt-level = "z"
+panic = "abort"
+codegen-units = 1
