@@ -22,6 +22,10 @@ members = [
     "missions/hello_zenith",
     "autonomic",
     "watchdog",
+    "federated_core",
+    "mesh_network",
+    "sovereign_sync",
+    "governance",
 ]
 
 resolver = "2"

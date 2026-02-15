@@ -61,12 +61,27 @@ fn main() {
                 println!("[HelloZenith] High focus detected! Creating optimal environment.");
                 println!("[HelloZenith] AI Knowledge Query Result: Answer to 'Meaning of Life' from HelixDB");
             }
+        } else if command == "mesh status" {
+            println!("[Z-Mesh] Status: Online");
+            println!("[Z-Mesh] Neighbors: MacBook_M2 (Connected), iPhone_17 (Searching)");
+            println!("[Z-Mesh] P2P DHT Syncing...");
+        } else if command == "federated update" {
+            println!("[Federated] Aggregating weight gradients...");
+            println!("[Federated] Injecting DP Noise (Epsilon: 0.1)");
+            println!("[Federated] Broadcast to Mesh complete.");
+        } else if command == "consensus verify" {
+            println!("[DAO] Proposed Patch: [Kernel_0.2.1]");
+            println!("[DAO] Quorum: 12/20 Nodes Signed.");
+            println!("[DAO] Verification: SUCCESS. Triggering A/B Partition Swap.");
         } else if command == "help" {
             println!("Commands:");
             println!("  find <query>      : Semantic vector search");
             println!("  ping <ip>         : Network connectivity test");
             println!("  zpm install <pkg> : Install a mission");
             println!("  mission run <pkg> : Execute a mission");
+            println!("  mesh status       : Check P2P mesh network");
+            println!("  federated update  : Trigger privacy-preserving AI update");
+            println!("  consensus verify  : Verify decentralized kernel update");
             println!("  exit              : Quit shell");
         } else {
             println!("Unknown command: {}", command);

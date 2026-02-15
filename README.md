@@ -77,10 +77,6 @@ graph TD
     Kernel -- Verify --> Cap
 ```
 
-## 📄 Documentation
 
--   [Technical Whitepaper](.gemini/antigravity/brain/7731931b-3f8a-46af-b54e-962f6c5c6e1a/zenith_os_whitepaper.md)
--   [Comprehensive Report](.gemini/antigravity/brain/7731931b-3f8a-46af-b54e-962f6c5c6e1a/comprehensive_report.md)
 
----
 *Zenith OS is a research project exploring the future of safe, agentic operating systems.*
