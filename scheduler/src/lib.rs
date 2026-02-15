@@ -12,10 +12,21 @@ pub enum ProcessType {
 
 #[derive(Debug, Clone)]
 pub struct Process {
-    pub id: u64,
     pub name: String,
     pub p_type: ProcessType,
     pub cpu_usage: f32, // 0.0 to 1.0
+    pub memory_usage_mb: u32,
+    pub max_memory_quota: u32,
+}
+
+impl Process {
+    pub fn check_quota(&self) {
+        if self.memory_usage_mb > self.max_memory_quota {
+             println!("[Scheduler] ALERT: Process {} exceeded Memory Quota ({} > {} MB). Terminating...", 
+                self.name, self.memory_usage_mb, self.max_memory_quota);
+             // In real OS: kill signal
+        }
+    }
 }
 
 pub struct IntentModel;
@@ -46,11 +57,19 @@ impl Scheduler {
     }
 
     pub fn register_process(&mut self, id: u64, name: &str, p_type: ProcessType) {
+        let quota = match p_type {
+            ProcessType::ForegroundMission => 1024, // 1GB
+            ProcessType::BackgroundSlop => 128,   // 128MB
+            ProcessType::KernelCritical => 4096,
+        };
+
         self.processes.insert(id, Process {
             id,
             name: name.to_string(),
             p_type,
             cpu_usage: 0.0,
+            memory_usage_mb: 50, // Mock usage
+            max_memory_quota: quota,
         });
     }
 
@@ -63,6 +82,7 @@ impl Scheduler {
         println!("[Scheduler] User Focus Score: {:.2} (Context: {})", focus_score, self.active_window);
 
         for process in self.processes.values_mut() {
+            process.check_quota();
             match process.p_type {
                 ProcessType::KernelCritical => {
                     process.cpu_usage = 1.0; // Always runs

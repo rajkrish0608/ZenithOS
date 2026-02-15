@@ -1,5 +1,18 @@
 #![no_std]
 
+extern crate alloc;
+use alloc::vec::Vec;
+
+pub struct Window {
+    pub id: u64,
+    pub x: usize,
+    pub y: usize,
+    pub width: usize,
+    pub height: usize,
+    pub z_order: u32,
+    pub opacity: f32, // 0.0 to 1.0
+}
+
 pub struct GopFrameBuffer {
     base_addr: usize,
     stride: usize,
@@ -17,18 +30,12 @@ impl GopFrameBuffer {
         }
     }
 
-    /// Draw a pixel at (x, y) with a specific color (ARGB format)
-    /// Formula: Address = Base + (y * Stride + x) * 4
     pub fn draw_pixel(&mut self, x: usize, y: usize, color: u32) {
-        if x >= self.width || y >= self.height {
-            return;
-        }
-
+        if x >= self.width || y >= self.height { return; }
         let offset = (y * self.stride + x) * 4;
-        let pixel_addr = (self.base_addr + offset) as *mut u32;
-
         unsafe {
-            *pixel_addr = color;
+            let ptr = (self.base_addr + offset) as *mut u32;
+            *ptr = color;
         }
     }
 
@@ -41,26 +48,38 @@ impl GopFrameBuffer {
     }
 }
 
-pub struct BitmappedFont;
+pub struct Compositor {
+    windows: Vec<Window>,
+    fb: GopFrameBuffer,
+}
 
-impl BitmappedFont {
-    /// Draws a character on the framebuffer.
-    /// This is a mock implementation for the 8x8 bitmap font.
-    pub fn draw_char(&self, buffer: &mut GopFrameBuffer, x: usize, y: usize, _c: char, color: u32) {
-        // In a real implementation, we would look up the bitmap for `c`.
-        // Here we just draw a 8x8 block for demonstration.
-        for dy in 0..8 {
-            for dx in 0..8 {
-                buffer.draw_pixel(x + dx, y + dy, color);
-            }
+impl Compositor {
+    pub fn new(base_addr: usize, stride: usize, width: usize, height: usize) -> Self {
+        Self {
+            windows: Vec::new(),
+            fb: GopFrameBuffer::new(base_addr, stride, width, height),
         }
     }
 
-    pub fn draw_string(&self, buffer: &mut GopFrameBuffer, x: usize, y: usize, text: &str, color: u32) {
-        let mut curr_x = x;
-        for c in text.chars() {
-            self.draw_char(buffer, curr_x, y, c, color);
-            curr_x += 10; // Advance cursor
-        }
+    pub fn create_window(&mut self, id: u64, x: usize, y: usize, width: usize, height: usize) {
+        self.windows.push(Window {
+            id, x, y, width, height,
+            z_order: self.windows.len() as u32,
+            opacity: 0.9, // Semi-transparent by default
+        });
+        self.compose();
+    }
+
+    pub fn compose(&mut self) {
+        // In a real compositor, we'd redraw regions based on Z-order.
+        // Mock: just log that we are composing.
+        // "Rendering N windows..."
+    }
+}
+
+pub struct BitmappedFont;
+impl BitmappedFont {
+    pub fn draw_string(&self, _fb: &mut GopFrameBuffer, _x: usize, _y: usize, _text: &str, _color: u32) {
+        // Mock implementation
     }
 }

@@ -7,12 +7,21 @@ members = [
     "vga_driver",
     "display_driver",
     "network_driver",
+    "mic_driver",
+    "camera_driver",
     "red_team",
     "ostd",
     "bootloader",
     "scheduler",
     "zenith_cli",
+    "oms",
     "bench_latency",
+    "loader",
+    "zapi",
+    "zpm",
+    "missions/hello_zenith",
+    "autonomic",
+    "watchdog",
 ]
 
 resolver = "2"

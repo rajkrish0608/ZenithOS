@@ -18,6 +18,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 
 [[package]]
+name = "autonomic"
+version = "0.1.0"
+
+[[package]]
 name = "bench_latency"
 version = "0.1.0"
 dependencies = [
@@ -33,6 +37,10 @@ name = "bumpalo"
 version = "3.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5dd9dc738b7a8311c7ade152424974d8115f2cdad61e8dab8dac9f2362298510"
+
+[[package]]
+name = "camera_driver"
+version = "0.1.0"
 
 [[package]]
 name = "cc"
@@ -97,6 +105,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "hello_zenith"
+version = "0.1.0"
+dependencies = [
+ "zapi",
+]
+
+[[package]]
 name = "iana-time-zone"
 version = "0.1.65"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -137,10 +152,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6800badb6cb2082ffd7b6a67e6125bb39f18782f793520caee8cb8846be06112"
 
 [[package]]
+name = "loader"
+version = "0.1.0"
+
+[[package]]
 name = "log"
 version = "0.4.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5e5032e24019045c762d3c0f28f5b6b8bbf38563a65908389bf7978758920897"
+
+[[package]]
+name = "mic_driver"
+version = "0.1.0"
 
 [[package]]
 name = "network_driver"
@@ -153,6 +176,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841"
 dependencies = [
  "autocfg",
+]
+
+[[package]]
+name = "oms"
+version = "0.1.0"
+dependencies = [
+ "camera_driver",
+ "display_driver",
+ "mic_driver",
 ]
 
 [[package]]
@@ -313,6 +345,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "watchdog"
+version = "0.1.0"
+dependencies = [
+ "autonomic",
+]
+
+[[package]]
 name = "windows-core"
 version = "0.62.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -372,8 +411,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "zapi"
+version = "0.1.0"
+
+[[package]]
 name = "zenith_cli"
 version = "0.1.0"
 dependencies = [
  "helix_db",
 ]
+
+[[package]]
+name = "zpm"
+version = "0.1.0"

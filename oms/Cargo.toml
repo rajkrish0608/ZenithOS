@@ -1,0 +1,9 @@
+[package]
+name = "oms"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+mic_driver = { path = "../mic_driver" }
+camera_driver = { path = "../camera_driver" }
+display_driver = { path = "../display_driver" }
