@@ -23,6 +23,7 @@ async fn main() {
         app: "Scanning...".to_string(),
         pid: 0,
         score: 50,
+        mode: "Standard".to_string(),
     }));
 
     // 2. Start Web Server (Spawn task)
@@ -58,11 +59,16 @@ async fn main() {
             data.score = new_score;
         }
 
-        println!("[Monitor] Global CPU: {:.1}% | Top App: {} (PID: {}) ({:.1}%) -> Intent: {:?} (Conf: {:.2}) | Score: {}", 
-            cpu, top_process, top_pid, proc_cpu, intent, confidence, new_score);
+        // Retrieve current mode safely
+        let mode = {
+            state.read().unwrap().mode.clone()
+        };
+
+        println!("[Monitor] Global CPU: {:.1}% | Top App: {} (PID: {}) ({:.1}%) -> Intent: {:?} (Conf: {:.2}) | Score: {} | Mode: {}", 
+            cpu, top_process, top_pid, proc_cpu, intent, confidence, new_score, mode);
 
         // Apply Optimization Policy
-        PolicyEngine::apply(&intent, top_pid, &monitor.sys);
+        PolicyEngine::apply(&intent, top_pid, &monitor.sys, &mode);
 
         tokio::time::sleep(Duration::from_secs(2)).await;
     }
