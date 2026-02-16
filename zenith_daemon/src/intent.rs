@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum IntentState {
@@ -6,6 +6,7 @@ pub enum IntentState {
     Writing,
     Browsing,
     Communication,
+    #[allow(dead_code)]
     Idle,
     Unknown,
 }

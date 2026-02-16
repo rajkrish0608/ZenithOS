@@ -36,10 +36,10 @@ pub async fn start_server(state: SharedState) {
     let addr = SocketAddr::from(([127, 0, 0, 1], 9999));
     println!("[Daemon] Web Dashboard running at http://{}", addr);
 
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+    match axum::Server::bind(&addr).serve(app.into_make_service()).await {
+        Ok(_) => {},
+        Err(e) => eprintln!("[Server] Error: {}", e),
+    }
 }
 
 async fn get_status(State(state): State<SharedState>) -> Json<AppState> {

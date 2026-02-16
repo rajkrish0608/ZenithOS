@@ -43,6 +43,7 @@ impl Database {
     }
 
     // Future: Get history for charts
+    #[allow(dead_code)]
     pub fn get_recent_events(&self, limit: i32) -> Result<Vec<(String, i32)>> {
         let conn = self.conn.lock().unwrap();
         let mut stmt = conn.prepare("SELECT timestamp, score FROM events ORDER BY id DESC LIMIT ?1")?;

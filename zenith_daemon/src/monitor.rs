@@ -1,5 +1,5 @@
 use sysinfo::{ProcessExt, System, SystemExt, CpuExt, PidExt};
-use std::collections::HashMap;
+
 
 pub struct SystemMonitor {
     pub sys: System,

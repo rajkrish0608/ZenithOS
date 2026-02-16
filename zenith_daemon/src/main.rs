@@ -8,10 +8,10 @@ mod db;
 use monitor::SystemMonitor;
 use intent::IntentEngine;
 use optimizer::PolicyEngine;
-use server::{AppState, SharedState};
+use server::AppState;
 use score::FocusCalculator;
 use db::Database;
-use std::{thread, time::Duration};
+use std::time::Duration;
 use std::sync::{Arc, RwLock};
 
 #[tokio::main]
