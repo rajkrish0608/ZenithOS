@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenith OS Dashboard</title>
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --card: #161616;
+            --text: #e0e0e0;
+            --accent: #00ff9d;
+            --dim: #444;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 800px;
+        }
+        .card {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid #222;
+            text-align: center;
+        }
+        .card h2 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+        }
+        .metric {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .intent-badge {
+            background: #222;
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        #cpu-val { color: #ff6b6b; }
+        #focus-val { color: var(--accent); }
+        .typing-effect::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="card" style="grid-column: span 2;">
+            <h2>Current Intent</h2>
+            <div class="metric" id="intent-val">Analyzing...</div>
+            <div class="intent-badge" id="app-val">Scanning processes</div>
+        </div>
+        <div class="card">
+            <h2>System Load (CPU)</h2>
+            <div class="metric" id="cpu-val">0%</div>
+        </div>
+        <div class="card">
+            <h2>Focus Score</h2>
+            <div class="metric" id="focus-val">--</div>
+        </div>
+    </div>
+
+    <script>
+        async function updateStatus() {
+            try {
+                const res = await fetch('/api/status');
+                const data = await res.json();
+                
+                document.getElementById('intent-val').textContent = data.intent;
+                document.getElementById('app-val').textContent = data.app + " (PID: " + data.pid + ")";
+                document.getElementById('cpu-val').textContent = data.cpu.toFixed(1) + "%";
+                document.getElementById('focus-val').textContent = data.score || "--";
+
+            } catch (e) {
+                console.error("Connection lost", e);
+            }
+        }
+        setInterval(updateStatus, 1000);
+        updateStatus();
+    </script>
+</body>
+</html>
