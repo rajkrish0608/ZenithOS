@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenith OS Dashboard</title>
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --card: #161616;
+            --text: #e0e0e0;
+            --accent: #00ff9d;
+            --dim: #444;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 800px;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid #222;
+            text-align: center;
+        }
+
+        .card h2 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+        }
+
+        .metric {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .intent-badge {
+            background: #222;
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .pro-badge {
+            background: #ffaa00;
+            color: #000;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            vertical-align: middle;
+            margin-left: 5px;
+            display: none;
+        }
+
+        .pro-badge.visible {
+            display: inline-block;
+        }
+
+        .free-badge {
+            background: #444;
+            color: #aaa;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+
+        .free-badge.hidden {
+            display: none;
+        }
+
+        #cpu-val {
+            color: #ff6b6b;
+        }
+
+        #focus-val {
+            color: var(--accent);
+        }
+
+        .mode-switcher {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .mode-btn {
+            background: #333;
+            border: 1px solid #444;
+            color: #ccc;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-btn:hover {
+            background: #444;
+        }
+
+        .mode-btn.active {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            font-weight: bold;
+        }
+
+        .mode-btn.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .mode-btn.locked::after {
+            content: '🔒';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 12px;
+        }
+
+        .typing-effect::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard">
+        <div class="card" style="grid-column: span 2;">
+            <h2>Current Intent</h2>
+            <div class="metric" id="intent-val">Analyzing...</div>
+            <div class="intent-badge" id="app-val">Scanning processes</div>
+        </div>
+        <div class="card">
+            <h2>System Load (CPU)</h2>
+            <div class="metric" id="cpu-val">0%</div>
+        </div>
+        <div class="card">
+            <h2>Focus Score</h2>
+            <div class="metric" id="focus-val">--</div>
+        </div>
+        <div class="card" style="grid-column: span 2;">
+            <h2>System Mode</h2>
+            <div class="mode-switcher">
+                <button class="mode-btn" onclick="setMode('Standard')" id="btn-Standard">Standard</button>
+                <button class="mode-btn" onclick="setMode('Focus')" id="btn-Focus">Focus</button>
+                <button class="mode-btn" onclick="setMode('Chill')" id="btn-Chill">Chill</button>
+            </div>
+        </div>
+        <div class="card" style="grid-column: span 2;">
+            <h2>Settings</h2>
+            <label style="display: flex; justify-content: center; align-items: center; gap: 10px; cursor: pointer;">
+                <input type="checkbox" id="telemetry-toggle" onchange="toggleTelemetry(this.checked)">
+                <span>Share Anonymous Usage Stats (Beta)</span>
+            </label>
+            <div style="margin-top: 15px;" id="upgrade-container">
+                <button class="mode-btn" onclick="upgradePro()"
+                    style="background: #ffaa00; color: #000; border: none; font-weight: bold; width: 100%;">
+                    Upgrade to Pro (Unlock Focus Mode)
+                </button>
+            </div>
+            <div style="margin-top: 15px; color: #ffaa00; font-weight: bold; display: none;" id="pro-thank-you">
+                PRO LICENSE ACTIVE
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function setMode(mode) {
+            try {
+                await fetch('/api/mode', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mode: mode })
+                });
+                updateStatus(); // Refresh immediately
+            } catch (e) {
+                console.error("Failed to set mode", e);
+            }
+        }
+
+        async function toggleTelemetry(enabled) {
+            try {
+                await fetch('/api/telemetry', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ enabled: enabled })
+                });
+            } catch (e) {
+                console.error("Failed to toggle telemetry", e);
+            }
+        }
+
+        async function upgradePro() {
+            try {
+                await fetch('/api/upgrade', { method: 'POST' });
+                updateStatus();
+            } catch (e) {
+                console.error("Failed to upgrade", e);
+            }
+        }
+
+        async function updateStatus() {
+            try {
+                const res = await fetch('/api/status');
+                const data = await res.json();
+
+                document.getElementById('intent-val').textContent = data.intent;
+                document.getElementById('app-val').textContent = data.app + " (PID: " + data.pid + ")";
+                document.getElementById('cpu-val').textContent = data.cpu.toFixed(1) + "%";
+                document.getElementById('focus-val').textContent = data.score || "--";
+
+                // Pro Status Logic
+                const isPro = data.is_pro;
+                const focusBtn = document.getElementById('btn-Focus');
+                const upgradeContainer = document.getElementById('upgrade-container');
+                const thankYouMsg = document.getElementById('pro-thank-you');
+
+                if (isPro) {
+                    if (focusBtn.classList.contains('locked')) {
+                        focusBtn.classList.remove('locked');
+                        focusBtn.title = "";
+                    }
+                    if (upgradeContainer) upgradeContainer.style.display = 'none';
+                    if (thankYouMsg) thankYouMsg.style.display = 'block';
+                } else {
+                    if (!focusBtn.classList.contains('locked')) {
+                        focusBtn.classList.add('locked');
+                        focusBtn.title = "Requires Pro License";
+                    }
+                }
+
+                // Update Buttons
+                document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+                if (data.mode) {
+                    document.getElementById('btn-' + data.mode).classList.add('active');
+                }
+
+                // Update Telemetry Checkbox (avoid overwriting user interaction)
+                const toggle = document.getElementById('telemetry-toggle');
+                if (document.activeElement !== toggle) {
+                    toggle.checked = data.telemetry;
+                }
+
+            } catch (e) {
+                console.error("Connection lost", e);
+            }
+        }
+        setInterval(updateStatus, 1000);
+        updateStatus();
+    </script>
+</body>
+
+</html>

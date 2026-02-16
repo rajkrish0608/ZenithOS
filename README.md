@@ -2,81 +2,74 @@
 
 **High-Performance | Memory-Safe | Zero-Trust | AI-Native**
 
-Zenith OS is a next-generation operating system built on a **Framekernel** architecture using **Rust**. It eliminates entire classes of vulnerabilities (buffer overflows, race conditions) and integrates Artificial Intelligence directly into the kernel for Intent-Aware Scheduling.
+Zenith is a dual-layer project comprising two distinct components:
+1.  **Zenith Product (The App)**: A background productivity engine for macOS/Linux that optimizes your focus *today*.
+2.  **Zenith Research (The Kernel)**: A next-gen Framekernel OS built from scratch in Rust for the *future*.
 
-## 🚀 Key Features
+---
 
--   **Framekernel Architecture**: Minimal Ring 0 executive. All drivers (VGA, Network, FS) run as **Sandboxed Micro-Services** in Ring 3.
--   **Zero-Trust Security**: No process is trusted by default. Hardware access requires cryptographically verified **Capability Keys** (`Ecdysis`).
--   **AI-Native Scheduling**: **Intent-Aware Scheduler** prioritizes your active "Foreground Mission" (e.g., Coding) and throttles background "Slop" to <5% CPU.
--   **Semantic Shell**: `Zenith-CLI` allows you to find files by *meaning* ("project notes") rather than exact filenames, using **Vector Similarity Search**.
--   **HelixDB Audit**: A local-first vector store that logs and analyzes every IPC event for security anomalies in real-time.
+## 1. Zenith Product (The App)
+**Status**: Release Candidate (v1.0)
+**Runs On**: Your current Mac / Linux machine.
 
-## 🛠️ Technology Stack
+### ⚡ What it does
+It runs quietly in the background, minimizing distractions and optimizing CPU resources based on your active context (e.g., Coding vs. Gaming).
 
--   **Language**: Rust (Edition 2021)
--   **Build System**: Cargo Workspace, Makefile
--   **Security**: SandCell (Isolation), Ecdysis (Capabilities), HelixDB (Audit)
--   **Simulation**: QEMU with `hvf` (Hypervisor.framework) acceleration
--   **Verification**: DeepSURF (Fuzzing), Red Team (Attack Simulation)
+### 🌟 Key Features
+*   **Auto-Focus**: Detects when you open developer tools (VS Code, Terminal) and automatically silences notifications.
+*   **Distraction Guard**: Warns or slows down social media apps during work hours.
+*   **Live Dashboard**: View your real-time **Focus Score** at `http://localhost:9999`.
+*   **Pro Mode**: Simulated "Pro" tier demonstrating feature gating.
 
-## 📦 Getting Started
-
-### Prerequisites
--   Rust (Nightly/Stable 2026)
--   QEMU
--   Make
-
-### Build & Run Simulation
-To compile the Kernel, Drivers, and boot the OS in QEMU:
-
+### 🚀 How to Run (Quick Start)
 ```bash
+# 1. Start the Daemon
+cargo run -p zenith_daemon
+
+# 2. Open dashboard
+open http://localhost:9999
+```
+
+---
+
+## 2. Zenith Research (The OS Kernel)
+**Status**: Research Prototype
+**Runs On**: QEMU Simulator / Bare Metal ARM64.
+
+### ⚡ What it does
+A clean-slate Operating System built from scratch in Rust. It explores new concepts in kernel design, unburdened by legacy code.
+
+### 🌟 Key Features
+*   **Instant Boot**: Boots in **<1 second**.
+*   **Security Demo**: "Red Team" tests prove immunity to buffer overflows.
+*   **AI Scheduler**: Uses "User Intent" instead of "Time Slices" to manage CPU.
+*   **Semantic Shell**: Find files by meaning ("tax documents") via vector search.
+
+### 🚀 How to Run (Simulation)
+```bash
+# Requires QEMU
 make run-qemu
 ```
 
-### Run Security Verification
-To launch the **Red Team** Agent and attempt a buffer overflow exploit (which Zenith OS will block):
+---
 
-```bash
-make test-security
-```
+## 📊 Comparison Table
 
-### Run AI Benchmarks
-To verify the Scheduler's latency impact (Target < 10ms):
+| Feature | Zenith Product (App) | Zenith Research (Kernel) |
+| :--- | :--- | :--- |
+| **Goal** | Improve Focus Today | Build OS of Tomorrow |
+| **Where** | macOS / Linux | Simulator (QEMU) |
+| **Risk** | Safe (User Space) | Experimental (Kernel Space) |
+| **Install** | `cargo run -p zenith_daemon` | `make run-qemu` |
 
-```bash
-cargo run -p bench_latency
-```
+---
 
-### Try the Semantic Shell
-To interact with the vector-search CLI:
+## 🛠️ Technology Stack
+*   **Language**: Rust (Edition 2021)
+*   **Build System**: Cargo Workspace, Makefile
+*   **Security**: SandCell (Isolation), Ecdysis (Capabilities), HelixDB (Audit)
+*   **Simulation**: QEMU with `hvf` acceleration
+*   **Verification**: DeepSURF (Fuzzing), Red Team (Attack Simulation)
 
-```bash
-cargo run -p zenith_cli
-```
-
-## 🏗️ Architecture
-
-```mermaid
-graph TD
-    User["User Focus"] --> Scheduler[Intent Scheduler]
-    User --> Shell[Zenith-CLI]
-    
-    subgraph "Safety Core"
-        Scheduler --> Kernel
-        Shell --> HelixDB
-        Cap[Ecdysis Capabilities]
-    end
-
-    subgraph "Driver Space"
-        VGA[VGA Driver]
-    end
-
-    Kernel -- Signed IPC --> VGA
-    VGA -- MMIO Request --> Kernel
-    Kernel -- Verify --> Cap
-```
-
-
-
+---
 *Zenith OS is a research project exploring the future of safe, agentic operating systems.*
