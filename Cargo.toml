@@ -26,6 +26,7 @@ members = [
     "mesh_network",
     "sovereign_sync",
     "governance",
+    "zenith_daemon",
 ]
 
 resolver = "2"
