@@ -32,9 +32,12 @@ impl Database {
         let conn = self.conn.lock().unwrap();
         let timestamp = Local::now().to_rfc3339();
         
+        // Privacy Guard: Ensure app_name is not a window title or path
+        let safe_app_name = app_name.split('/').last().unwrap_or(app_name); // simplistic binary name check
+        
         conn.execute(
             "INSERT INTO events (timestamp, intent, app_name, score, mode) VALUES (?1, ?2, ?3, ?4, ?5)",
-            params![timestamp, intent, app_name, score, mode],
+            params![timestamp, intent, safe_app_name, score, mode],
         )?;
         Ok(())
     }
