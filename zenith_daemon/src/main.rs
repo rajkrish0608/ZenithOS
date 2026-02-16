@@ -27,7 +27,8 @@ async fn main() {
             cpu, top_process, top_pid, proc_cpu, intent);
 
         // Apply Optimization Policy
-        PolicyEngine::apply(&intent, top_pid);
+        // We need access to the system struct from monitor
+        PolicyEngine::apply(&intent, top_pid, &monitor.sys);
 
         tokio::time::sleep(Duration::from_secs(2)).await;
     }

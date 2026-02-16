@@ -24,21 +24,29 @@ impl PriorityController {
     }
 }
 
+use sysinfo::{System, SystemExt, ProcessExt, PidExt};
+
 pub struct PolicyEngine;
 
 impl PolicyEngine {
-    pub fn apply(intent: &crate::intent::IntentState, top_pid: i32) {
+    pub fn apply(intent: &crate::intent::IntentState, top_pid: i32, sys: &System) {
         match intent {
-            crate::intent::IntentState::Coding => {
-                // Boost the coding app
-                // println!("[Policy] Boosting PID {} for Coding Intent", top_pid);
+            crate::intent::IntentState::Coding | crate::intent::IntentState::Writing => {
+                // 1. Boost the active app
                 PriorityController::boost(top_pid);
-            },
-            crate::intent::IntentState::Writing => {
-                 PriorityController::boost(top_pid);
+
+                // 2. Distraction Suppression: Throttle Comm Apps
+                for (pid, process) in sys.processes() {
+                    let name = process.name();
+                    if name.contains("Slack") || name.contains("Discord") || name.contains("Teams") {
+                        // println!("[Policy] Throttling Distraction: {} (PID: {})", name, pid);
+                        PriorityController::throttle(pid.as_u32() as i32);
+                    }
+                }
             },
             crate::intent::IntentState::Communication => {
-                // No boost, standard priority
+                // If intent IS communication, ensure we un-throttle (reset nice to 0) 
+                // For now, we just don't throttle.
             },
             _ => {}
         }

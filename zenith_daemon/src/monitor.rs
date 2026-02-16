@@ -2,7 +2,7 @@ use sysinfo::{ProcessExt, System, SystemExt, CpuExt, PidExt};
 use std::collections::HashMap;
 
 pub struct SystemMonitor {
-    sys: System,
+    pub sys: System,
 }
 
 impl SystemMonitor {
@@ -26,9 +26,6 @@ impl SystemMonitor {
         let mut name = String::new();
 
         for (pid, process) in self.sys.processes() {
-            if process.cpu_usage() > 0.1 {
-               // Debug print
-            }
             if process.cpu_usage() > max_cpu {
                 max_cpu = process.cpu_usage();
                 name = process.name().to_string();
