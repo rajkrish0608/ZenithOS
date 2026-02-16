@@ -1,4 +1,4 @@
-use sysinfo::{ProcessExt, System, SystemExt, CpuExt};
+use sysinfo::{ProcessExt, System, SystemExt, CpuExt, PidExt};
 use std::collections::HashMap;
 
 pub struct SystemMonitor {
@@ -20,21 +20,21 @@ impl SystemMonitor {
         self.sys.global_cpu_info().cpu_usage()
     }
 
-    pub fn get_top_process(&self) -> (String, f32) {
-        let mut top_pid = 0;
+    pub fn get_top_process_info(&self) -> (String, f32, i32) {
+        let mut top_pid_out = 0;
         let mut max_cpu = 0.0;
         let mut name = String::new();
 
         for (pid, process) in self.sys.processes() {
             if process.cpu_usage() > 0.1 {
-                // Debug print
-                // println!("PID: {} | Name: {} | CPU: {:.1}", pid, process.name(), process.cpu_usage());
+               // Debug print
             }
             if process.cpu_usage() > max_cpu {
                 max_cpu = process.cpu_usage();
                 name = process.name().to_string();
+                top_pid_out = pid.as_u32() as i32; // sysinfo Pid can be cast
             }
         }
-        (name, max_cpu)
+        (name, max_cpu, top_pid_out)
     }
 }
