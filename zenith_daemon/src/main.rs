@@ -3,12 +3,14 @@ mod intent;
 mod optimizer;
 mod server;
 mod score;
+mod db;
 
 use monitor::SystemMonitor;
 use intent::IntentEngine;
 use optimizer::PolicyEngine;
 use server::{AppState, SharedState};
 use score::FocusCalculator;
+use db::Database;
 use std::{thread, time::Duration};
 use std::sync::{Arc, RwLock};
 
@@ -36,6 +38,18 @@ async fn main() {
     let mut monitor = SystemMonitor::new();
     let intent_engine = IntentEngine::new();
     let mut focus_calc = FocusCalculator::new();
+    
+    // Initialize Database
+    let db = match Database::new("zenith.db") {
+        Ok(d) => {
+            println!("[Daemon] Database initialized (zenith.db)");
+            Some(d)
+        },
+        Err(e) => {
+            eprintln!("[Daemon] Failed to init DB: {}", e);
+            None
+        }
+    };
 
     println!("[Daemon] Starting Monitoring Loop (Interval: 2s)...");
 
@@ -66,6 +80,14 @@ async fn main() {
 
         println!("[Monitor] Global CPU: {:.1}% | Top App: {} (PID: {}) ({:.1}%) -> Intent: {:?} (Conf: {:.2}) | Score: {} | Mode: {}", 
             cpu, top_process, top_pid, proc_cpu, intent, confidence, new_score, mode);
+
+        // Log to Database (if active)
+        if let Some(ref d) = db {
+            let intent_str = format!("{:?}", intent);
+            if let Err(e) = d.log_event(&intent_str, &top_process, new_score, &mode) {
+                eprintln!("[DB] Log Warning: {}", e);
+            }
+        }
 
         // Apply Optimization Policy
         PolicyEngine::apply(&intent, top_pid, &monitor.sys, &mode);
