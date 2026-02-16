@@ -26,6 +26,8 @@ async fn main() {
         pid: 0,
         score: 50,
         mode: "Standard".to_string(),
+        telemetry: false,
+        is_pro: false,
     }));
 
     // 2. Start Web Server (Spawn task)
@@ -87,6 +89,12 @@ async fn main() {
             if let Err(e) = d.log_event(&intent_str, &top_process, new_score, &mode) {
                 eprintln!("[DB] Log Warning: {}", e);
             }
+        }
+
+        // Mock Telemetry Upload
+        let telemetry_active = { state.read().unwrap().telemetry };
+        if telemetry_active {
+            println!("[Telemetry] Sending usage stats (34 bytes)...");
         }
 
         // Apply Optimization Policy

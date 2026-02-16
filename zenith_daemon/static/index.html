@@ -64,6 +64,36 @@
             display: inline-block;
         }
 
+        .pro-badge {
+            background: #ffaa00;
+            color: #000;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            vertical-align: middle;
+            margin-left: 5px;
+            display: none;
+        }
+
+        .pro-badge.visible {
+            display: inline-block;
+        }
+
+        .free-badge {
+            background: #444;
+            color: #aaa;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+
+        .free-badge.hidden {
+            display: none;
+        }
+
         #cpu-val {
             color: #ff6b6b;
         }
@@ -97,6 +127,20 @@
             color: #000;
             border-color: var(--accent);
             font-weight: bold;
+        }
+
+        .mode-btn.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .mode-btn.locked::after {
+            content: '🔒';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 12px;
         }
 
         .typing-effect::after {
@@ -135,6 +179,22 @@
                 <button class="mode-btn" onclick="setMode('Chill')" id="btn-Chill">Chill</button>
             </div>
         </div>
+        <div class="card" style="grid-column: span 2;">
+            <h2>Settings</h2>
+            <label style="display: flex; justify-content: center; align-items: center; gap: 10px; cursor: pointer;">
+                <input type="checkbox" id="telemetry-toggle" onchange="toggleTelemetry(this.checked)">
+                <span>Share Anonymous Usage Stats (Beta)</span>
+            </label>
+            <div style="margin-top: 15px;" id="upgrade-container">
+                <button class="mode-btn" onclick="upgradePro()"
+                    style="background: #ffaa00; color: #000; border: none; font-weight: bold; width: 100%;">
+                    Upgrade to Pro (Unlock Focus Mode)
+                </button>
+            </div>
+            <div style="margin-top: 15px; color: #ffaa00; font-weight: bold; display: none;" id="pro-thank-you">
+                PRO LICENSE ACTIVE
+            </div>
+        </div>
     </div>
 
     <script>
@@ -151,6 +211,27 @@
             }
         }
 
+        async function toggleTelemetry(enabled) {
+            try {
+                await fetch('/api/telemetry', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ enabled: enabled })
+                });
+            } catch (e) {
+                console.error("Failed to toggle telemetry", e);
+            }
+        }
+
+        async function upgradePro() {
+            try {
+                await fetch('/api/upgrade', { method: 'POST' });
+                updateStatus();
+            } catch (e) {
+                console.error("Failed to upgrade", e);
+            }
+        }
+
         async function updateStatus() {
             try {
                 const res = await fetch('/api/status');
@@ -161,10 +242,36 @@
                 document.getElementById('cpu-val').textContent = data.cpu.toFixed(1) + "%";
                 document.getElementById('focus-val').textContent = data.score || "--";
 
+                // Pro Status Logic
+                const isPro = data.is_pro;
+                const focusBtn = document.getElementById('btn-Focus');
+                const upgradeContainer = document.getElementById('upgrade-container');
+                const thankYouMsg = document.getElementById('pro-thank-you');
+
+                if (isPro) {
+                    if (focusBtn.classList.contains('locked')) {
+                        focusBtn.classList.remove('locked');
+                        focusBtn.title = "";
+                    }
+                    if (upgradeContainer) upgradeContainer.style.display = 'none';
+                    if (thankYouMsg) thankYouMsg.style.display = 'block';
+                } else {
+                    if (!focusBtn.classList.contains('locked')) {
+                        focusBtn.classList.add('locked');
+                        focusBtn.title = "Requires Pro License";
+                    }
+                }
+
                 // Update Buttons
                 document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
                 if (data.mode) {
                     document.getElementById('btn-' + data.mode).classList.add('active');
+                }
+
+                // Update Telemetry Checkbox (avoid overwriting user interaction)
+                const toggle = document.getElementById('telemetry-toggle');
+                if (document.activeElement !== toggle) {
+                    toggle.checked = data.telemetry;
                 }
 
             } catch (e) {

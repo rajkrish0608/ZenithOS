@@ -1,0 +1,31 @@
+   Compiling zenith_daemon v0.1.0 (/Users/rajkrish0608/PROJECT DETAILS/Zenith OS/zenith_daemon)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.78s
+     Running `target/debug/zenith_daemon`
+--- Zenith Background Service (v0.1) ---
+[Daemon] Initializing System Monitor...
+[Daemon] Web Dashboard running at http://127.0.0.1:9999
+[Daemon] Database initialized (zenith.db)
+[Daemon] Starting Monitoring Loop (Interval: 2s)...
+[Monitor] Global CPU: 19.9% | Top App:  (PID: 0) (0.0%) -> Intent: Unknown (Conf: 0.00) | Score: 49 | Mode: Standard
+[Monitor] Global CPU: 7.8% | Top App: Antigravity Helper (Renderer) (PID: 12801) (12.3%) -> Intent: Unknown (Conf: 0.00) | Score: 48 | Mode: Standard
+[Monitor] Global CPU: 7.7% | Top App: Antigravity Helper (Renderer) (PID: 12801) (23.3%) -> Intent: Unknown (Conf: 0.00) | Score: 47 | Mode: Standard
+[Server] Rejected 'Focus' mode request (Requires Pro License)
+[Monitor] Global CPU: 14.8% | Top App: Antigravity Helper (Renderer) (PID: 12801) (52.1%) -> Intent: Unknown (Conf: 0.00) | Score: 46 | Mode: Standard
+[Server] License Upgraded to PRO!
+[Monitor] Global CPU: 14.4% | Top App: Antigravity Helper (Renderer) (PID: 12801) (38.1%) -> Intent: Unknown (Conf: 0.00) | Score: 45 | Mode: Standard
+[Server] Mode switched to: Focus
+[Monitor] Global CPU: 14.8% | Top App: Antigravity Helper (Renderer) (PID: 12801) (53.3%) -> Intent: Unknown (Conf: 0.00) | Score: 44 | Mode: Focus
+[Monitor] Global CPU: 10.7% | Top App: Antigravity Helper (Renderer) (PID: 12801) (24.1%) -> Intent: Unknown (Conf: 0.00) | Score: 43 | Mode: Focus
+[Monitor] Global CPU: 6.2% | Top App: Antigravity Helper (Renderer) (PID: 12801) (16.2%) -> Intent: Unknown (Conf: 0.00) | Score: 42 | Mode: Focus
+[Monitor] Global CPU: 7.1% | Top App: Antigravity Helper (Renderer) (PID: 12801) (17.3%) -> Intent: Unknown (Conf: 0.00) | Score: 41 | Mode: Focus
+[Monitor] Global CPU: 11.4% | Top App: Antigravity Helper (Renderer) (PID: 12801) (45.7%) -> Intent: Unknown (Conf: 0.00) | Score: 40 | Mode: Focus
+[Monitor] Global CPU: 11.2% | Top App: Antigravity Helper (Renderer) (PID: 12801) (46.1%) -> Intent: Unknown (Conf: 0.00) | Score: 39 | Mode: Focus
+[Monitor] Global CPU: 19.2% | Top App: Antigravity Helper (Renderer) (PID: 12801) (57.6%) -> Intent: Unknown (Conf: 0.00) | Score: 38 | Mode: Focus
+[Monitor] Global CPU: 7.6% | Top App: Antigravity Helper (Renderer) (PID: 12801) (17.1%) -> Intent: Unknown (Conf: 0.00) | Score: 37 | Mode: Focus
+[Monitor] Global CPU: 11.1% | Top App: Antigravity Helper (Renderer) (PID: 12801) (26.9%) -> Intent: Unknown (Conf: 0.00) | Score: 36 | Mode: Focus
+[Monitor] Global CPU: 7.8% | Top App: Antigravity Helper (Renderer) (PID: 12801) (18.9%) -> Intent: Unknown (Conf: 0.00) | Score: 35 | Mode: Focus
+[Monitor] Global CPU: 5.9% | Top App: Antigravity Helper (Renderer) (PID: 12801) (9.2%) -> Intent: Unknown (Conf: 0.00) | Score: 34 | Mode: Focus
+[Monitor] Global CPU: 15.3% | Top App: Antigravity Helper (Renderer) (PID: 12801) (45.7%) -> Intent: Unknown (Conf: 0.00) | Score: 33 | Mode: Focus
+[Monitor] Global CPU: 9.3% | Top App: Antigravity Helper (Renderer) (PID: 12801) (19.4%) -> Intent: Unknown (Conf: 0.00) | Score: 32 | Mode: Focus
+[Monitor] Global CPU: 13.4% | Top App: Antigravity Helper (Renderer) (PID: 12801) (25.5%) -> Intent: Unknown (Conf: 0.00) | Score: 31 | Mode: Focus
+[Monitor] Global CPU: 5.1% | Top App: Antigravity Helper (Renderer) (PID: 12801) (11.0%) -> Intent: Unknown (Conf: 0.00) | Score: 30 | Mode: Focus
