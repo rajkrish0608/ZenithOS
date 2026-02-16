@@ -21,10 +21,10 @@ async fn main() {
         
         let cpu = monitor.get_cpu_usage();
         let (top_process, proc_cpu, top_pid) = monitor::SystemMonitor::get_top_process_info(&monitor); // We need to update monitor to return PID
-        let intent = intent_engine.classify(&top_process);
+        let (intent, confidence) = intent_engine.infer(&top_process);
 
-        println!("[Monitor] Global CPU: {:.1}% | Top App: {} (PID: {}) ({:.1}%) -> Intent: {:?}", 
-            cpu, top_process, top_pid, proc_cpu, intent);
+        println!("[Monitor] Global CPU: {:.1}% | Top App: {} (PID: {}) ({:.1}%) -> Intent: {:?} (Conf: {:.2})", 
+            cpu, top_process, top_pid, proc_cpu, intent, confidence);
 
         // Apply Optimization Policy
         // We need access to the system struct from monitor

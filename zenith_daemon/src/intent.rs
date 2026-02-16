@@ -10,50 +10,70 @@ pub enum IntentState {
     Unknown,
 }
 
+struct KeywordWeight {
+    intent: IntentState,
+    weight: f32, // 0.0 to 1.0
+}
+
 pub struct IntentEngine {
-    rules: HashMap<String, IntentState>,
+    // Map keyword -> (Intent, Weight)
+    // e.g., "code" -> (Coding, 0.8)
+    knowledge_base: Vec<(String, KeywordWeight)>,
 }
 
 impl IntentEngine {
     pub fn new() -> Self {
-        let mut rules = HashMap::new();
-        // Coding
-        rules.insert("Code".to_string(), IntentState::Coding);
-        rules.insert("cargo".to_string(), IntentState::Coding);
-        rules.insert("rustc".to_string(), IntentState::Coding);
-        rules.insert("Terminal".to_string(), IntentState::Coding);
-        rules.insert("iTerm2".to_string(), IntentState::Coding);
-        
-        // Writing
-        rules.insert("Word".to_string(), IntentState::Writing);
-        rules.insert("Notion".to_string(), IntentState::Writing);
-        rules.insert("Obsidian".to_string(), IntentState::Writing);
-        rules.insert("TextEdit".to_string(), IntentState::Writing);
+        let mut kb = Vec::new();
 
-        // Browsing
-        rules.insert("Google Chrome".to_string(), IntentState::Browsing);
-        rules.insert("Safari".to_string(), IntentState::Browsing);
-        rules.insert("Firefox".to_string(), IntentState::Browsing);
+        // Coding Pattern
+        kb.push(("Code".to_string(), KeywordWeight { intent: IntentState::Coding, weight: 0.9 }));
+        kb.push(("cargo".to_string(), KeywordWeight { intent: IntentState::Coding, weight: 1.0 }));
+        kb.push(("rustc".to_string(), KeywordWeight { intent: IntentState::Coding, weight: 1.0 }));
+        kb.push(("Term".to_string(), KeywordWeight { intent: IntentState::Coding, weight: 0.7 })); // Terminal, iTerm
+        kb.push(("Git".to_string(), KeywordWeight { intent: IntentState::Coding, weight: 0.8 }));
 
-        // Comm
-        rules.insert("Slack".to_string(), IntentState::Communication);
-        rules.insert("Discord".to_string(), IntentState::Communication);
-        rules.insert("Zoom".to_string(), IntentState::Communication);
-        rules.insert("Microsoft Teams".to_string(), IntentState::Communication);
+        // Writing Pattern
+        kb.push(("Word".to_string(), KeywordWeight { intent: IntentState::Writing, weight: 0.9 }));
+        kb.push(("Notion".to_string(), KeywordWeight { intent: IntentState::Writing, weight: 0.9 }));
+        kb.push(("Obsidian".to_string(), KeywordWeight { intent: IntentState::Writing, weight: 0.9 }));
+        kb.push(("Text".to_string(), KeywordWeight { intent: IntentState::Writing, weight: 0.6 }));
 
-        // Debug/Verification Rule
-        rules.insert("Antigravity".to_string(), IntentState::Coding);
+        // Browsing Pattern
+        kb.push(("Chrome".to_string(), KeywordWeight { intent: IntentState::Browsing, weight: 0.8 }));
+        kb.push(("Safari".to_string(), KeywordWeight { intent: IntentState::Browsing, weight: 0.8 }));
+        kb.push(("Firefox".to_string(), KeywordWeight { intent: IntentState::Browsing, weight: 0.8 }));
+        kb.push(("Brave".to_string(), KeywordWeight { intent: IntentState::Browsing, weight: 0.8 }));
 
-        Self { rules }
+        // Communication Pattern
+        kb.push(("Slack".to_string(), KeywordWeight { intent: IntentState::Communication, weight: 0.9 }));
+        kb.push(("Discord".to_string(), KeywordWeight { intent: IntentState::Communication, weight: 0.9 }));
+        kb.push(("Teams".to_string(), KeywordWeight { intent: IntentState::Communication, weight: 0.9 }));
+        kb.push(("Zoom".to_string(), KeywordWeight { intent: IntentState::Communication, weight: 0.9 }));
+
+        Self { knowledge_base: kb }
     }
 
-    pub fn classify(&self, app_name: &str) -> IntentState {
-        // V1.1: Partial matching (e.g., "Code Helper" -> Coding)
-        for (key, state) in &self.rules {
-            if app_name.contains(key) {
-                return state.clone();
+    /// Infers intent based on weighted keyword matching.
+    /// Returns (Intent, Confidence Score)
+    pub fn infer(&self, app_name: &str) -> (IntentState, f32) {
+        let mut best_intent = IntentState::Unknown;
+        let mut max_score = 0.0;
+
+        for (keyword, weight_obj) in &self.knowledge_base {
+            if app_name.contains(keyword) {
+                // If match found, use its weight as score
+                if weight_obj.weight > max_score {
+                    max_score = weight_obj.weight;
+                    best_intent = weight_obj.intent.clone();
+                }
             }
         }
-        IntentState::Unknown
+
+        // Low confidence fallback
+        if max_score < 0.5 {
+            return (IntentState::Unknown, max_score);
+        }
+
+        (best_intent, max_score)
     }
 }
